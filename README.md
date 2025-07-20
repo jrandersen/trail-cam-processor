@@ -63,3 +63,7 @@ For each photo with wildlife:
 - JSON file with detection details and confidence scores
 
 No wildlife detected? File gets `_no_wildlife` suffix for easy filtering.
+
+![Made with love in Asheville, NC](https://madewithlove.now.sh/us?colorA=%23575757&colorB=%2344cbd5&template=for-the-badge&text=Asheville%2C+NC)
+
+Tutorial portion Copyright © 2022 by Jason Andersen. All Rights Reserved
