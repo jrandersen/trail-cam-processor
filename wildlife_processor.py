@@ -19,6 +19,7 @@ class WildlifeProcessor:
         self.input_dir = Path(input_dir)
         self.output_dir = Path(output_dir)
         self.confidence_threshold = confidence_threshold
+        self.save_all_photos = False  # Default: only save wildlife photos
         
         # Create output directory
         self.output_dir.mkdir(exist_ok=True)
@@ -132,22 +133,23 @@ class WildlifeProcessor:
         new_filename = self.create_filename(image_path, date_taken, animals)
         output_path = self.output_dir / new_filename
         
-        # Copy image to output directory
-        shutil.copy2(image_path, output_path)
-        
-        # Save detection info if animals found
-        if animals:
-            self.save_detection_info(output_path, animals, image_path)
-            self.stats['wildlife_found'] += 1
+        # Copy image to output directory (if configured to save all, or if wildlife found)
+        if self.save_all_photos or animals:
+            shutil.copy2(image_path, output_path)
             
-            # Update animal counts
-            for animal in animals:
-                name = animal['animal']
-                self.stats['animals_detected'][name] = self.stats['animals_detected'].get(name, 0) + 1
+            # Save detection info if animals found
+            if animals:
+                self.save_detection_info(output_path, animals, image_path)
+                self.stats['wildlife_found'] += 1
+                
+                # Update animal counts
+                for animal in animals:
+                    name = animal['animal']
+                    self.stats['animals_detected'][name] = self.stats['animals_detected'].get(name, 0) + 1
         
         self.stats['total_processed'] += 1
         
-        return len(animals) > 0
+        return len(animals) > 0, self.save_all_photos or len(animals) > 0
     
     def process_all_images(self):
         """Process all images in the input directory"""
@@ -169,8 +171,11 @@ class WildlifeProcessor:
         # Process each image
         for i, image_path in enumerate(image_files, 1):
             try:
-                has_wildlife = self.process_single_image(image_path)
-                status = "✓ Wildlife found" if has_wildlife else "- No wildlife"
+                has_wildlife, was_saved = self.process_single_image(image_path)
+                if was_saved:
+                    status = "✓ Wildlife found" if has_wildlife else "✓ Saved (no wildlife)"
+                else:
+                    status = "- Skipped (no wildlife)"
                 print(f"  [{i}/{len(image_files)}] {status}")
                 
             except Exception as e:
@@ -210,11 +215,13 @@ def main():
         INPUT_DIR = config.INPUT_DIR
         OUTPUT_DIR = config.OUTPUT_DIR
         CONFIDENCE = config.CONFIDENCE_THRESHOLD
+        SAVE_ALL = config.SAVE_ALL_PHOTOS
     except ImportError:
         # Default configuration - CHANGE THESE PATHS
         INPUT_DIR = "trail_cam_photos"      # Directory with your photos
         OUTPUT_DIR = "processed_wildlife"   # Where to save organized photos
         CONFIDENCE = 0.3                    # Detection confidence (0.0 to 1.0)
+        SAVE_ALL = False                    # Only save photos with wildlife
     
     print("Wildlife Trail Camera Processor")
     print("=" * 40)
@@ -231,6 +238,10 @@ def main():
     
     # Create processor and run
     processor = WildlifeProcessor(INPUT_DIR, OUTPUT_DIR, CONFIDENCE)
+    
+    # Configure whether to save all photos or only wildlife photos
+    processor.save_all_photos = SAVE_ALL
+    
     processor.process_all_images()
 
 if __name__ == "__main__":

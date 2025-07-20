@@ -21,6 +21,7 @@ python wildlife_processor.py
 - Detects animals in photos using YOLOv8
 - Extracts photo dates from EXIF data
 - Organizes photos by date and animal type
+- **Default**: Only saves photos with wildlife detected (saves storage space)
 - Example output: `2024-01-15_14-30-22_deer_raccoon.jpg`
 
 ## Requirements
@@ -36,7 +37,10 @@ Edit `wildlife_processor.py`:
 INPUT_DIR = "trail_cam_photos"      # Your photos folder
 OUTPUT_DIR = "processed_wildlife"   # Output folder
 CONFIDENCE = 0.3                    # Detection threshold
+SAVE_ALL = False                    # Only save wildlife photos
 ```
+
+Or copy `examples/sample_config.py` to `config.py` for more options.
 
 ## Performance
 

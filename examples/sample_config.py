@@ -35,6 +35,7 @@ MAX_ANIMALS_IN_NAME = 3               # Max animals to include in filename
 # Processing options
 SAVE_DETECTION_JSON = True            # Save detailed detection info as JSON files
 COPY_ORIGINALS = True                 # Copy files (True) or move them (False)
+SAVE_ALL_PHOTOS = False               # Save all photos (True) or only wildlife photos (False)
 BATCH_SIZE = 10                       # Number of images to process at once
 
 # Supported image formats
