@@ -64,4 +64,4 @@ For each photo with wildlife:
 
 No wildlife detected? File gets `_no_wildlife` suffix for easy filtering.
 
-![Made with love in Asheville, NC](https://madewithlove.now.sh/us?colorA=%23575757&colorB=%2344cbd5&template=for-the-badge&text=Asheville%2C+NC)
+![Made in Asheville, NC](https://madewithlove.now.sh/us?colorA=%23575757&colorB=%2344cbd5&template=for-the-badge&text=Asheville%2C+NC)
