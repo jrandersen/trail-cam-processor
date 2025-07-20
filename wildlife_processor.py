@@ -204,10 +204,17 @@ class WildlifeProcessor:
 def main():
     """Main function to run the wildlife processor"""
     
-    # Configuration - CHANGE THESE PATHS
-    INPUT_DIR = "trail_cam_photos"      # Directory with your photos
-    OUTPUT_DIR = "processed_wildlife"   # Where to save organized photos
-    CONFIDENCE = 0.3                    # Detection confidence (0.0 to 1.0)
+    # Try to import config file, fall back to defaults
+    try:
+        import config
+        INPUT_DIR = config.INPUT_DIR
+        OUTPUT_DIR = config.OUTPUT_DIR
+        CONFIDENCE = config.CONFIDENCE_THRESHOLD
+    except ImportError:
+        # Default configuration - CHANGE THESE PATHS
+        INPUT_DIR = "trail_cam_photos"      # Directory with your photos
+        OUTPUT_DIR = "processed_wildlife"   # Where to save organized photos
+        CONFIDENCE = 0.3                    # Detection confidence (0.0 to 1.0)
     
     print("Wildlife Trail Camera Processor")
     print("=" * 40)

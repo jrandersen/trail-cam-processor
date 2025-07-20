@@ -1,24 +1,29 @@
+# Configuration files
+config.py
+
 # Virtual environment
 wildlife_env/
 venv/
 env/
 
-# Model files
+# YOLO model files
 *.pt
 runs/
 
-# Test data
+# Photo directories
 test_images/
 sample_photos/
 processed_*/
+trail_cam_photos/
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.egg-info/
+.pytest_cache/
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
@@ -26,3 +31,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+*.swo
+
+# Logs
+*.log

@@ -26,7 +26,7 @@ pip install --upgrade pip
 
 # Install required packages
 echo "Installing required packages..."
-pip install ultralytics opencv-python pillow
+pip install -r requirements.txt
 
 # Test installation
 echo "Testing installation..."
