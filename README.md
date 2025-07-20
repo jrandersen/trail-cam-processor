@@ -8,6 +8,10 @@ Automatically detect and organize wildlife photos from trail cameras using compu
 # Setup
 ./setup.sh
 
+# Configure
+cp examples/sample_config.py config.py
+# Edit config.py with your paths
+
 # Test single image
 source wildlife_env/bin/activate
 python test_single_image.py sample_photo.jpg
@@ -32,15 +36,18 @@ python wildlife_processor.py
 
 ## Configuration
 
-Edit `wildlife_processor.py`:
+Copy and edit the config file:
+```bash
+cp examples/sample_config.py config.py
+```
+
+Key settings in `config.py`:
 ```python
 INPUT_DIR = "trail_cam_photos"      # Your photos folder
 OUTPUT_DIR = "processed_wildlife"   # Output folder
-CONFIDENCE = 0.3                    # Detection threshold
-SAVE_ALL = False                    # Only save wildlife photos
+CONFIDENCE_THRESHOLD = 0.3          # Detection threshold
+SAVE_ALL_PHOTOS = False             # Only save wildlife photos
 ```
-
-Or copy `examples/sample_config.py` to `config.py` for more options.
 
 ## Performance
 

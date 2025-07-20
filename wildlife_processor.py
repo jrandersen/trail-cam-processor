@@ -209,7 +209,7 @@ class WildlifeProcessor:
 def main():
     """Main function to run the wildlife processor"""
     
-    # Try to import config file, fall back to defaults
+    # Import configuration
     try:
         import config
         INPUT_DIR = config.INPUT_DIR
@@ -217,11 +217,13 @@ def main():
         CONFIDENCE = config.CONFIDENCE_THRESHOLD
         SAVE_ALL = config.SAVE_ALL_PHOTOS
     except ImportError:
-        # Default configuration - CHANGE THESE PATHS
-        INPUT_DIR = "trail_cam_photos"      # Directory with your photos
-        OUTPUT_DIR = "processed_wildlife"   # Where to save organized photos
-        CONFIDENCE = 0.3                    # Detection confidence (0.0 to 1.0)
-        SAVE_ALL = False                    # Only save photos with wildlife
+        print("ERROR: config.py not found!")
+        print("Please copy examples/sample_config.py to config.py and update the paths.")
+        return
+    except AttributeError as e:
+        print(f"ERROR: Missing setting in config.py: {e}")
+        print("Please check examples/sample_config.py for required settings.")
+        return
     
     print("Wildlife Trail Camera Processor")
     print("=" * 40)
