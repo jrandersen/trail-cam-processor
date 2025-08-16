@@ -13,6 +13,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 import json
 from ultralytics import YOLO
+import config
 
 class WildlifeProcessor:
     def __init__(self, input_dir, output_dir, confidence_threshold=0.3):
@@ -24,15 +25,35 @@ class WildlifeProcessor:
         # Create output directory
         self.output_dir.mkdir(exist_ok=True)
         
-        # Load YOLO model (downloads automatically on first run)
-        print("Loading YOLO model...")
-        self.model = YOLO('yolov8n.pt')  # nano version for speed
+        # Try Roboflow trail camera model first
+        if hasattr(config, 'USE_ROBOFLOW_MODEL') and config.USE_ROBOFLOW_MODEL and config.ROBOFLOW_API_KEY:
+            try:
+                from roboflow import Roboflow
+                rf = Roboflow(api_key=config.ROBOFLOW_API_KEY)
+                workspace = rf.workspace("sanskriti-jain")
+                project = workspace.project("trail-camera-animal-detection")
+                self.model = project.version(6).model
+                print("✓ Using Roboflow trail camera model!")
+                self.using_roboflow = True
+                # Roboflow models have different class names
+                self.wildlife_classes = set()  # Will be determined by model
+            except Exception as e:
+                print(f"✗ Roboflow failed: {e}")
+                print("Falling back to YOLO...")
+                self.model = YOLO('yolov8n.pt')
+                self.using_roboflow = False
+        else:
+            print("Loading YOLO model...")
+            self.model = YOLO('yolov8n.pt')
+            self.using_roboflow = False
         
-        # Wildlife classes from COCO dataset (expand this list as needed)
-        self.wildlife_classes = {
-            'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 
-            'bear', 'zebra', 'giraffe', 'person'  # person included to filter humans
-        }
+        # Set wildlife classes based on model type
+        if not self.using_roboflow:
+            # COCO classes that actually exist
+            self.wildlife_classes = {
+                'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 
+                'bear', 'zebra', 'giraffe', 'elephant', 'person'
+            }
         
         # Stats tracking
         self.stats = {
@@ -61,32 +82,49 @@ class WildlifeProcessor:
         return datetime.fromtimestamp(timestamp)
     
     def detect_wildlife(self, image_path):
-        """Run YOLO detection on image and return wildlife found"""
+        """Run detection on image and return wildlife found"""
         try:
-            # Run inference
-            results = self.model(image_path, verbose=False)
-            
-            wildlife_detected = []
-            for result in results:
-                boxes = result.boxes
-                if boxes is not None:
-                    for box in boxes:
-                        # Get class name and confidence
-                        class_id = int(box.cls[0])
-                        class_name = self.model.names[class_id]
-                        confidence = float(box.conf[0])
-                        
-                        # Check if it's wildlife and above confidence threshold
-                        if (class_name in self.wildlife_classes and 
-                            confidence >= self.confidence_threshold):
-                            wildlife_detected.append({
-                                'animal': class_name,
-                                'confidence': confidence,
-                                'bbox': box.xyxy[0].tolist()  # bounding box coordinates
-                            })
-            
-            return wildlife_detected
-            
+            if self.using_roboflow:
+                # Roboflow API
+                results = self.model.predict(str(image_path), confidence=40, overlap=30)
+                
+                wildlife_detected = []
+                for prediction in results.json().get('predictions', []):
+                    class_name = prediction['class']
+                    confidence = prediction['confidence']
+                    
+                    if confidence >= self.confidence_threshold:
+                        wildlife_detected.append({
+                            'animal': class_name,
+                            'confidence': confidence,
+                            'bbox': [prediction['x'], prediction['y'], prediction['width'], prediction['height']]
+                        })
+                
+                return wildlife_detected
+                
+            else:
+                # YOLO API (your existing code)
+                results = self.model(image_path, verbose=False)
+                
+                wildlife_detected = []
+                for result in results:
+                    boxes = result.boxes
+                    if boxes is not None:
+                        for box in boxes:
+                            class_id = int(box.cls[0])
+                            class_name = self.model.names[class_id]
+                            confidence = float(box.conf[0])
+                            
+                            if (class_name in self.wildlife_classes and 
+                                confidence >= self.confidence_threshold):
+                                wildlife_detected.append({
+                                    'animal': class_name,
+                                    'confidence': confidence,
+                                    'bbox': box.xyxy[0].tolist()
+                                })
+                
+                return wildlife_detected
+                
         except Exception as e:
             self.stats['errors'].append(f"Detection error for {image_path}: {e}")
             return []
