@@ -122,6 +122,8 @@ A simple GUI tool to review your processed images with bounding boxes:
 python wildlife_viewer.py
 ```
 
+![Viewer Screenshot](examples/wildlife_result_viewer.png)
+
 **Features:**
 - Browse images with Previous/Next buttons or arrow keys
 - View bounding boxes around detected animals
