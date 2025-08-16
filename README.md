@@ -2,6 +2,8 @@
 
 Automatically detect and organize wildlife photos from trail cameras using computer vision. Supports both offline YOLO models and cloud-based Roboflow trail camera models for improved accuracy.
 
+![Viewer Screenshot](examples/wildlife_result_viewer.png)
+
 ## Quick Start
 
 ```bash
@@ -121,8 +123,6 @@ A simple GUI tool to review your processed images with bounding boxes:
 # Run the viewer
 python wildlife_viewer.py
 ```
-
-![Viewer Screenshot](examples/wildlife_result_viewer.png)
 
 **Features:**
 - Browse images with Previous/Next buttons or arrow keys
