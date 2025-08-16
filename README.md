@@ -113,6 +113,29 @@ Files without wildlife get `_no_wildlife` suffix for easy filtering.
 - **Spaces in paths**: Use quotes around paths with spaces
 - **Permissions**: Ensure read access to input directory, write access to output
 
+## Wildlife Detection Viewer
+
+A simple GUI tool to review your processed images with bounding boxes:
+
+```bash
+# Run the viewer
+python wildlife_viewer.py
+```
+
+**Features:**
+- Browse images with Previous/Next buttons or arrow keys
+- View bounding boxes around detected animals
+- See detection confidence scores
+- Zoom and scroll for large images
+- Works with both YOLO and Roboflow detection results
+
+**Usage:**
+1. Click "Select Folder" and choose your `processed_wildlife` output folder
+2. Navigate through images using arrow keys or buttons
+3. Review detection quality and confidence scores
+
+**Note:** On macOS, you may need to install tkinter: `brew install python-tk`
+
 ## Troubleshooting
 
 ```bash
@@ -124,6 +147,9 @@ python debug_detection.py "/path/to/test/image.jpg"
 
 # Force offline YOLO model
 # Set USE_ROBOFLOW_MODEL = False in config.py
+
+# View processed results with bounding boxes
+python wildlife_viewer.py
 ```
 
 ## Getting Better Results
@@ -132,5 +158,6 @@ python debug_detection.py "/path/to/test/image.jpg"
 2. **Lower confidence threshold** (0.15-0.25) for more detections
 3. **Process smaller batches** if you have memory issues
 4. **Check sample outputs** before processing entire collection
+5. **Use the viewer** to review detection quality and adjust settings
 
 ![Made in Asheville, NC](https://madewithlove.now.sh/us?colorA=%23575757&colorB=%2344cbd5&template=for-the-badge&text=Asheville%2C+NC)
